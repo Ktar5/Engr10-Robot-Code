@@ -55,19 +55,18 @@ void _ControlRobot(){
     //Forward and not up (its on our arm)
     SetServo(2, lowered);
 
-    //Scan for a wall using our _FindNoWall(); method/function
+    //Scan for a wall using our 
+    //_FindNoWall(); method/function
     int dir = _FindNoWall();
 
     //Check if the direction is forward
     if(dir == 1){
-    	//Move forward
         SetMotor(8, -70);
         SetMotor(9, -70);
         Wait(350);
         SetMotor(8, 127);
         SetMotor(9, -127);
     }else{ //Otherwise, move backward
-    	//Move backward
         SetMotor(8, 70);
         SetMotor(9, 70);
         Wait(350);
