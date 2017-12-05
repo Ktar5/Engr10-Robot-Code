@@ -5,7 +5,7 @@ bool doMove = true;
 int lowered = -127, raised = 0;
 
 void _ControlRobot(){
-	//Raise the servo motor controlling the arm
+    //Raise the servo motor controlling the arm
     SetServo(2, raised);
 
     //Move to **RED** beacon until we know the
@@ -15,22 +15,23 @@ void _ControlRobot(){
     //Turn off beacon by lowering the arm
     SetServo(2, lowered);
 
-    //Wait a little for the servo to slap 'dat beacon
-    //Then raise the servo
+    //Wait a little for the servo to slap 'dat
+    //Beacon. Then raise the servo
     Wait(350);
     SetServo(2, raised);
 
-    //Wait a little for the arm to thrust back up
-    //Then refresh strength of IR signal
+    //Wait a little for the arm to thrust back
+    //Up. Then refresh strength of IR signal
     Wait(350);
     Read_PD();
 
-	//Check PD_sum against threshold value
-	//Execute code in loop until PD_sum is < 5000 
-	//PD_sum < 5000 signifies the beacon was turned off
+    //Check PD_sum against threshold value
+    //Execute code in loop until PD_sum is < 5000 
+    //PD_sum < 5000 signifies the beacon was
+    //turned off
     while(PD_sum > 5000){
         //If a beacon is on and very close,
-        //Try to turn beacon off, again, and again, and again
+        //Try to turn beacon off, again, and again
         SetServo(2, lowered); //
         Wait(450);
         SetServo(2, raised);
