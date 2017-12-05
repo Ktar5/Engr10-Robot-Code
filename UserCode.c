@@ -77,40 +77,47 @@ void _ControlRobot(){
 }
 
 int _FindNoWall() {
-    StartUltrasonic(6, 7);
-    StartUltrasonic(1, 2);
+	//Start up our ultrasonic sensors
+    StartUltrasonic(6, 7); //Butt sensor
+    StartUltrasonic(1, 2); //Forward sensor
+    //Create an array to store the output of sensors
     int ultrasonic[2];
-    char snum[50];
+    //Allow us to use 'doMove = false' to exit while loop
     doMove = true;
-    while (doMove == true) {
+    while (doMove == true) { // While doMove is set to true
+    	//Rotate the robot slightly
         SetMotor(8, 70);
         SetMotor(9, 70);
         Wait(500);
         SetMotor(8,0);
         SetMotor(9,0);
 
+        //Default our ultrasonic data to -1
+        //Explanation later
         ultrasonic[0] = -1;
         ultrasonic[1] = -1;
-        //wait turn again
-        ultrasonic[0] = GetUltrasonic(6, 7); //Back
-        //Wait(10);
-        ultrasonic[1] = GetUltrasonic(1, 2); // Front
-        //Wait(10);
+
+        ultrasonic[0] = GetUltrasonic(6, 7); //index 0 = butt
+        ultrasonic[1] = GetUltrasonic(1, 2); //index 1 = forward
+
+        //Ultrasonic processing is synchronous, and will throw errors when
+        //It cannot get a bounce back from any object (no object in range)
+        //However, it still runs, and will still return 0-- but
+        //After an inconsistent amount of time. Thus, we wait
+        //Until our variables get assigned from their default values
         while(ultrasonic[0] == -1 && ultrasonic[1] == -1){
             Wait(200);
-            sprintf(snum, "Ultrasonic= Front: %d, Back: %d", (int) ultrasonic[1], (int) ultrasonic[0]);
-            Print(snum);
         }
+
+        //If butt sensor is 0 or has far away wall, return '0'
         if(ultrasonic[0] > 200 || ultrasonic[0] == 0){
             doMove = false;
             return 0;
-        }else if(ultrasonic[1] > 200 || ultrasonic[1] == 0){
+        }//Otherwise, if forward sensor is 0 or has far away wall, return '1'
+        else if(ultrasonic[1] > 200 || ultrasonic[1] == 0){
             doMove = false;
             return 1;
         }
-
-        //Possibly store last value and check if there has been a sudden increase
-        // in the value-- could prevent some stupid shit from happening
     }
     return 1;
 }
@@ -120,17 +127,21 @@ void _MoveToBeacon(int frequency) {
     while (doMove == true) {
         Read_PD();
         find_max();
-        _Move(); //If we stop, stop loop and continue
-        //Stop immediately
+        _Move();
+        //Stop immediately if limit switch is touched
         if(GetDigitalInput(3) == 0){
             doMove = false;
             SetMotor(8, 0);
             SetMotor(9, 0);
         }
     }
+    //Reset doMove now that we're out of the loop
     doMove = true;
 }
 
+//Custom move function that uses our "doMove" variable to instantly
+//Stop any sort of movement and give us some faster times :)
+//Only thing added was "doMove = ____" statements
 void _Move(){
     int temp, error, steer, speed;
     error=4-max_no;
@@ -156,6 +167,7 @@ void _Move(){
     SetMotor(9, temp);
 }
 
+//Print things to the screen
 void Print(char string[]) {
     Wait(150);
     PrintToScreen("%s\n", string);
